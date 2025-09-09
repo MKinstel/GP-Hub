@@ -60,6 +60,71 @@
     </a>
 </section>
 
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Site with AI Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        #chat-container { border: 1px solid #ccc; padding: 20px; margin-top: 20px; }
+        #user-input { width: 70%; padding: 10px; }
+        #send-btn { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        #response { margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        .loading { color: #666; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My GitHub Site</h1>
+    <p>This is your index.html with an embedded AI chat tool powered by Hugging Face.</p>
+    
+    <div id="chat-container">
+        <h2>AI Chat Tool</h2>
+        <p>Ask the AI anything (e.g., "Explain quantum computing"):</p>
+        <input type="text" id="user-input" placeholder="Enter your prompt here..." />
+        <button id="send-btn">Send to AI</button>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://api-inference.huggingface.co/models/gpt2';  // Free model; swap for others like 'microsoft/DialoGPT-medium'
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const responseDiv = document.getElementById('response');
+
+        sendBtn.addEventListener('click', async () => {
+            const prompt = userInput.value.trim();
+            if (!prompt) return;
+
+            responseDiv.innerHTML = '<p class="loading">AI is thinking...</p>';
+            userInput.value = '';
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ inputs: prompt, parameters: { max_length: 100, temperature: 0.7 } })  // Customize params: max_length for response size, temperature for creativity
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    responseDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+                } else {
+                    const aiResponse = data[0]?.generated_text || 'No response generated.';
+                    responseDiv.innerHTML = `<p><strong>AI:</strong> ${aiResponse}</p>`;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `<p>Error: ${error.message}. Check your connection.</p>`;
+            }
+        });
+
+        // Optional: Allow Enter key to send
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendBtn.click();
+        });
+    </script
+
   <!-- Contact -->
   <section id="contact" class="py-16 px-6 bg-gray-900" data-aos="fade-left">
     <div class="text-center">
@@ -70,7 +135,7 @@
       </a>
     </div>
   </section>
-
+  
   <!-- Footer -->
   <footer class="text-center py-6 bg-gray-800 text-gray-500 text-sm">
     © 2025 GP Hub. All rights reserved.
